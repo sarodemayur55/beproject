@@ -4,7 +4,7 @@ exports.connect = () => {
   // Connecting to the database
   mongoose.set("strictQuery", false);
   mongoose
-    .connect("mongodb://localhost:27017/beproject", {
+    .connect("mongodb+srv://mayur1310:mayur1310@cluster0.ctq8z.mongodb.net/beproject?retryWrites=true&w=majority", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     //   useCreateIndex: true,
