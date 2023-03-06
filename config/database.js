@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-
+require('dotenv').config()
 exports.connect = () => {
   // Connecting to the database
   mongoose.set("strictQuery", false);
   mongoose
-    .connect("mongodb+srv://mayur1310:mayur1310@cluster0.ctq8z.mongodb.net/beproject?retryWrites=true&w=majority", {
+    .connect(process.env.MONGO_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     //   useCreateIndex: true,

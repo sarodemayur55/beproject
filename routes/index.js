@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Image=require('../models/image')
+var Image = require('../models/image')
 const path = require("path");
 const multer = require("multer");
 const formidable = require('formidable');
@@ -15,85 +15,84 @@ var isAuthenticated = function (req, res, next) {
 	res.redirect('/');
 }
 
-module.exports = function(passport){
+module.exports = function (passport) {
 
 	/* GET login page. */
 	// router.get('/', function(req, res) {
-    // 	// Display the Login page with any flash message, if any
-		
+	// 	// Display the Login page with any flash message, if any
+
 	// 	res.json({message:"Logged "})
 	// });
 
 	/* Handle Login POST */
-	router.post('/login', function(req, res, next) {
-		passport.authenticate('login', function(err, user, info) {
-		  if (err) {
-			return res.status(400).send({ message: 'Auth Failed'})
-		  }
-		  if (!user) {
-			return res.status(400).send({ message: 'Auth Failed'})
-		  }
-		  console.log(user)
-		  console.log("Printed")
-		//   req.user=user;
-		console.log("yt")
-		console.log(req.user)
-		console.log("yt")
-		req.session.user = req.user;
-		  return res.json({user, info})
+	router.post('/login', function (req, res, next) {
+		passport.authenticate('login', function (err, user, info) {
+			if (err) {
+				return res.status(400).send({ message: 'Auth Failed' })
+			}
+			if (!user) {
+				return res.status(400).send({ message: 'Auth Failed' })
+			}
+			console.log(user)
+			console.log("Printed")
+			//   req.user=user;
+			console.log("yt")
+			console.log(req.user)
+			console.log("yt")
+			req.session.user = req.user;
+			return res.json({ user, info })
 		})(req, res, next)
-	  });
-    router.get('/loggedin', function(req, res){
+	});
+	router.get('/loggedin', function (req, res) {
 		console.log("Logged In")
 		console.log(req.session.user)
 		res.json(req.session.user)
 	});
 	/* GET Registration Page */
-	router.get('/signup', function(req, res){
-		res.render('register',{message: req.flash('message')});
+	router.get('/signup', function (req, res) {
+		res.render('register', { message: req.flash('message') });
 	});
 
 	/* Handle Registration POST */
 	router.post('/signup', passport.authenticate('signup', {
 		successRedirect: '/home',
 		failureRedirect: '/signup',
-		failureFlash : true  
+		failureFlash: true
 	}));
 
 	/* GET Home Page */
-	router.get('/home', isAuthenticated, function(req, res){
-        res.json({message:"Signed Up"})
+	router.get('/home', isAuthenticated, function (req, res) {
+		res.json({ message: "Signed Up" })
 		// res.render('home', { user: req.user });
 	});
 
-    /* Handle Logout */
-    router.get('/logout',  function(req, res, next) {
-		req.session=null;
-		return  res.send({message:"Logged Out"});
+	/* Handle Logout */
+	router.get('/logout', function (req, res, next) {
+		req.session = null;
+		return res.send({ message: "Logged Out" });
 		req.session.destroy(function (err) {
 			res.clearCookie('connect.sid');
-			return res.send({message:"Logged Out"})
-		  });
-        req.logout(function(err) {
+			return res.send({ message: "Logged Out" })
+		});
+		req.logout(function (err) {
 			// res.clearCookie('connect.sid');
 			// delete req.session;
-			req.session=null;
-        if (err) { return next(err); }
-        res.send({message:"Logged Out"})
+			req.session = null;
+			if (err) { return next(err); }
+			res.send({ message: "Logged Out" })
 		})
-    });
-	router.get('/status',(req,res)=>{
+	});
+	router.get('/status', (req, res) => {
 		// return res.json(req.session.user)
 		console.log(req.session.user);
-		let temp=req.session.user;
-		if(req.session.user) {
+		let temp = req.session.user;
+		if (req.session.user) {
 			console.log(req.session.user);
-			res.send({user:req.session.user})
+			res.send({ user: req.session.user })
 		}
-		else
-		{
+		else {
 			// console.log(req.user);
-			return res.status(400).send({message:"Not Logged In"});
+			return res.status(400).send({ message: "Not Logged In" });
 		}
 	})
 
@@ -102,32 +101,30 @@ module.exports = function(passport){
 
 
 
-	String.prototype.toObjectId = function() {
+	String.prototype.toObjectId = function () {
 		var ObjectId = (require('mongoose').Types.ObjectId);
 		return new ObjectId(this.toString());
-	  };
-	router.post('/uploadimage',(req,res)=>{
+	};
+	router.post('/uploadimage', (req, res) => {
 		// console.log(req.body);
-		var url=req.body.url;
-		var result="ok";
+		var url = req.body.url;
+		var result = "ok";
 		// return res.send({url:url,user:req.session.user});
 
 
-		Image.findOne({userid:req.session.user._id.toObjectId()},(err,obj)=>{
+		Image.findOne({ userid: req.session.user._id.toObjectId() }, (err, obj) => {
 			console.log(err);
 			// console.log(obj)
-			if(!obj)
-			{
-				var obj=new Image();
-				obj.userid=req.session.user._id.toObjectId();
-				
+			if (!obj) {
+				var obj = new Image();
+				obj.userid = req.session.user._id.toObjectId();
+
 			}
-			obj.images.push({url,result})
-			obj.save((err)=>{
-				if(err)
+			obj.images.push({ url, result })
+			obj.save((err) => {
+				if (err)
 					console.log(err);
-				else
-				{
+				else {
 					console.log("Donee")
 					res.send(obj);
 				}
@@ -135,34 +132,50 @@ module.exports = function(passport){
 		})
 	});
 
-	const storage = multer.diskStorage({
-		destination: "./tmp/",
-		filename: function(req, file, cb){
-		   cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
-		}
-	 });
-	 
-	 const upload = multer({
-		storage: storage,
-		limits:{fileSize: 1000000},
-	 }).single("myImage");
+	// const storage = multer.diskStorage({
+	// 	destination: "./tmp/",
+	// 	filename: function (req, file, cb) {
+	// 		cb(null, "IMAGE-" + Date.now() + path.extname(file.originalname));
+	// 	}
+	// });
+
+	// const upload = multer({
+	// 	storage: storage,
+	// 	limits: { fileSize: 1000000 },
+	// }).single("myImage");
 
 
 
-	 router.post("/processimage",(req,res)=>{
+	router.post("/processimage", (req, res) => {
+
+
+		const form = formidable({ multiples: true });
+
+		form.parse(req, (err, fields, files) => {
+			if (err) {
+				next(err);
+				return;
+			}
+			console.log(files);
+		});
 
 
 
-		console.log("Request file ---", req.file);
-		// return res.send(200).end();
-		upload(req, res, (err) => {
-			//Here you get file.
-			console.log("Request file ---", req.file);
-			/*Now do where ever you want to do*/
-			if(!err)
-			   return res.send(200).end();
-		 });
-	 } );
+		// console.log("Test")
+		// console.log(req.files);
+		// // return;
+
+
+		// console.log("Request file ---", req.file);
+		// // return res.send(200).end();
+		// upload(req, res, (err) => {
+		// 	//Here you get file.
+		// 	console.log("Request file ---", req.file);
+		// 	/*Now do where ever you want to do*/
+		// 	if(!err)
+		// 	   return res.send(200).end();
+		//  });
+	});
 
 
 	return router;
