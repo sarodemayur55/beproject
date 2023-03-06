@@ -136,7 +136,7 @@ module.exports = function(passport){
 	});
 
 	const storage = multer.diskStorage({
-		destination: "./public/uploads/",
+		destination: "./tmp/",
 		filename: function(req, file, cb){
 		   cb(null,"IMAGE-" + Date.now() + path.extname(file.originalname));
 		}
