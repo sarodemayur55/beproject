@@ -4,7 +4,7 @@ var Image = require('../models/image')
 const path = require("path");
 const multer = require("multer");
 const formidable = require('formidable');
-
+require('dotenv').config()
 var isAuthenticated = function (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
 	// Passport adds this method to request object. A middleware is allowed to add properties to
@@ -71,13 +71,13 @@ module.exports = function (passport) {
 		req.session = null;
 		// res.clearCookie("session", { path: "/" });
 		// res.clearCookie("session.sig", { path: "/" });
-		res.cookie("session", "", {
-			// maxAge: sevenDaysToSeconds,
-			httpOnly: false,
-			Secure:true,
-			expires: new Date(Date.now()),
-			overwrite: true
-		  }) 
+		// res.cookie("session", "", {
+		// 	// maxAge: sevenDaysToSeconds,
+		// 	httpOnly: false,
+		// 	Secure:true,
+		// 	expires: new Date(Date.now()),
+		// 	overwrite: true
+		//   }) 
 		return res.send({ message: "Logged Out" });
 		req.session.destroy(function (err) {
 			res.clearCookie('connect.sid');
@@ -153,7 +153,9 @@ module.exports = function (passport) {
 	// 	limits: { fileSize: 1000000 },
 	// }).single("myImage");
 
-
+	router.get('/getawskeys',(req,res)=>{
+		res.send({ACCESS_KEY:process.env.ACCESS_KEY,SECRET_ACCESS_KEY:process.env.SECRET_ACCESS_KEY})
+	})
 
 	router.post("/processimage", (req, res) => {
 
