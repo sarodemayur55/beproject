@@ -69,6 +69,8 @@ module.exports = function (passport) {
 	/* Handle Logout */
 	router.get('/logout', function (req, res, next) {
 		req.session = null;
+		res.clearCookie("session", { path: "/" });
+		res.clearCookie("session.sig", { path: "/" });
 		return res.send({ message: "Logged Out" });
 		req.session.destroy(function (err) {
 			res.clearCookie('connect.sid');
