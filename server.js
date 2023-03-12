@@ -86,6 +86,7 @@ app.use(express.json());
 app.use(cookieSession({
   maxAge: 24 * 60 * 60 * 1000, // one day in miliseconds
   name: 'session',
+  secure:true,
   keys: ['key1', 'key2']
 }));
 // app.use(expressSession({

@@ -68,8 +68,13 @@ module.exports = function (passport) {
 
 	/* Handle Logout */
 	router.get('/logout', function (req, res, next) {
-		req.session = null;
-		// res.clearCookie("session", { path: "/" });
+		// req.session = null;
+		// req.logout(function(err) {
+		// 	if (err) { return next(err); }
+		// 	res.redirect('/');
+		//   });
+		res.clearCookie("session", { path: "/" });
+		return res.redirect('/')
 		// res.clearCookie("session.sig", { path: "/" });
 		// res.cookie("session", "", {
 		// 	// maxAge: sevenDaysToSeconds,
@@ -78,11 +83,12 @@ module.exports = function (passport) {
 		// 	expires: new Date(Date.now()),
 		// 	overwrite: true
 		//   }) 
+		// req.session.destroy(function (err) {
+		// 	res.clearCookie('connect.sid');
+		// 	return res.send({ message: "Logged Out" })
+		// });
 		return res.send({ message: "Logged Out" });
-		req.session.destroy(function (err) {
-			res.clearCookie('connect.sid');
-			return res.send({ message: "Logged Out" })
-		});
+		
 		req.logout(function (err) {
 			// res.clearCookie('connect.sid');
 			// delete req.session;
