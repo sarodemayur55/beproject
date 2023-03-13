@@ -49,56 +49,45 @@ module.exports = function (passport) {
 		res.json(req.session.user)
 	});
 	/* GET Registration Page */
-	router.get('/signup', function (req, res) {
-		res.render('register', { message: req.flash('message') });
-	});
+	// router.get('/signup', function (req, res) {
+	// 	res.render('register', { message: req.flash('message') });
+	// });
 
 	/* Handle Registration POST */
-	router.post('/signup', passport.authenticate('signup', {
-		successRedirect: '/home',
-		failureRedirect: '/signup',
-		failureFlash: true
-	}));
+	router.post('/signup', function (req, res, next) {
+		passport.authenticate('signup', function (err, user, info) {
+			console.log(err);
+			console.log(user);
+			console.log(info);
+			if (err) {
+				return res.status(400).send(info)
+			}
+			if (!user) {
+				return res.status(400).send(info)
+			}
+			
+			return res.json(info)
+		})(req, res, next)
+	});
+
+
+	// router.post('/signup', passport.authenticate('signup', {
+	// 	successRedirect: '/home',
+	// 	failureRedirect: '/signup',
+	// 	// failureFlash: true
+	// }));
 
 	/* GET Home Page */
 	router.get('/home', isAuthenticated, function (req, res) {
 		res.json({ message: "Signed Up" })
-		// res.render('home', { user: req.user });
 	});
 
 	/* Handle Logout */
 	router.get('/logout', function (req, res, next) {
-		// req.session = null;
-		// req.logout(function(err) {
-		// 	if (err) { return next(err); }
-		// 	res.redirect('/');
-		//   });
 		res.clearCookie("session", { path: "/" });
 		return res.redirect('/')
-		// res.clearCookie("session.sig", { path: "/" });
-		// res.cookie("session", "", {
-		// 	// maxAge: sevenDaysToSeconds,
-		// 	httpOnly: false,
-		// 	Secure:true,
-		// 	expires: new Date(Date.now()),
-		// 	overwrite: true
-		//   }) 
-		// req.session.destroy(function (err) {
-		// 	res.clearCookie('connect.sid');
-		// 	return res.send({ message: "Logged Out" })
-		// });
-		return res.send({ message: "Logged Out" });
-		
-		req.logout(function (err) {
-			// res.clearCookie('connect.sid');
-			// delete req.session;
-			req.session = null;
-			if (err) { return next(err); }
-			res.send({ message: "Logged Out" })
-		})
 	});
 	router.get('/status', (req, res) => {
-		// return res.json(req.session.user)
 		console.log(req.session.user);
 		let temp = req.session.user;
 		if (req.session.user) {
