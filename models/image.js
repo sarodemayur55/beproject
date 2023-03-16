@@ -10,7 +10,7 @@ module.exports = mongoose.model('Image',{
                 type:String
             },
             result:{
-                type:String
+                type: mongoose.Schema.Types.Mixed
             }
         }
       ]

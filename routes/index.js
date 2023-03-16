@@ -112,7 +112,11 @@ module.exports = function (passport) {
 	router.post('/uploadimage', (req, res) => {
 		// console.log(req.body);
 		var url = req.body.url;
-		var result = "ok";
+		var result = req.body.result;
+		// var result = {
+		// 	c1:"r1",
+		// 	c2:"r2"
+		// };
 		// return res.send({url:url,user:req.session.user});
 
 
