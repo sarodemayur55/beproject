@@ -11,7 +11,8 @@ module.exports = mongoose.model('Image',{
             },
             result:{
                 type: mongoose.Schema.Types.Mixed
-            }
-        }
+            },
+            time : { type : Date, default: Date.now }
+        },
       ]
 });

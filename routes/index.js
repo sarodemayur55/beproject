@@ -12,7 +12,7 @@ var isAuthenticated = function (req, res, next) {
 	if (req.isAuthenticated())
 		return next();
 	// if the user is not authenticated then redirect him to the login page
-	res.redirect('/');
+	res.status(400).send({message:"Not Authenticated"});
 }
 
 module.exports = function (passport) {
@@ -140,22 +140,12 @@ module.exports = function (passport) {
 		})
 	});
 
-	// const storage = multer.diskStorage({
-	// 	destination: "./tmp/",
-	// 	filename: function (req, file, cb) {
-	// 		cb(null, "IMAGE-" + Date.now() + path.extname(file.originalname));
-	// 	}
-	// });
-
-	// const upload = multer({
-	// 	storage: storage,
-	// 	limits: { fileSize: 1000000 },
-	// }).single("myImage");
-
+	// Get AWS Keys
 	router.get('/getawskeys',(req,res)=>{
 		res.send({ACCESS_KEY:process.env.ACCESS_KEY,SECRET_ACCESS_KEY:process.env.SECRET_ACCESS_KEY})
 	})
 
+	// Not in use currently
 	router.post("/processimage", (req, res) => {
 
 
@@ -168,24 +158,42 @@ module.exports = function (passport) {
 			}
 			console.log(files);
 		});
-
-
-
-		// console.log("Test")
-		// console.log(req.files);
-		// // return;
-
-
-		// console.log("Request file ---", req.file);
-		// // return res.send(200).end();
-		// upload(req, res, (err) => {
-		// 	//Here you get file.
-		// 	console.log("Request file ---", req.file);
-		// 	/*Now do where ever you want to do*/
-		// 	if(!err)
-		// 	   return res.send(200).end();
-		//  });
 	});
+	
+
+	// Get History
+	router.get('/history',(req,res)=>{
+		if(!req.session.user)
+		{
+			return res.send({message:"Not Logged In"})
+		}
+		Image.findOne({ userid: req.session.user._id.toObjectId() }, (err, obj) => {
+			console.log(err);
+			// console.log(obj)
+			if (!obj) {
+				var obj = new Image();
+				obj.userid = req.session.user._id.toObjectId();
+
+			}
+			obj.images.sort(function(a,b){
+				// Turn your strings into dates, and then subtract them
+				// to get a value that is either negative, positive, or zero.
+				// console.log(a.time)
+				return ((b.time) - (a.time));
+			  });
+			return res.send(obj);
+			// obj.images.push({ url, result })
+			// obj.save((err) => {
+			// 	if (err)
+			// 		console.log(err);
+			// 	else {
+			// 		console.log("Donee")
+			// 		res.send(obj);
+			// 	}
+			// });
+		})
+		// res.send({message:"Accessed history route"})
+	})
 
 
 	return router;
