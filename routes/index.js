@@ -4,6 +4,7 @@ var Image = require('../models/image')
 const path = require("path");
 const multer = require("multer");
 const formidable = require('formidable');
+const { ObjectId } = require('mongodb');
 require('dotenv').config()
 var isAuthenticated = function (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
@@ -182,19 +183,49 @@ module.exports = function (passport) {
 				return ((b.time) - (a.time));
 			  });
 			return res.send(obj);
-			// obj.images.push({ url, result })
-			// obj.save((err) => {
-			// 	if (err)
-			// 		console.log(err);
-			// 	else {
-			// 		console.log("Donee")
-			// 		res.send(obj);
-			// 	}
-			// });
 		})
-		// res.send({message:"Accessed history route"})
 	})
 
+
+	// Delete Image in history
+	router.delete('/deleteimg/:id',(req,res)=>{
+		const id = req.params.id;
+		 // Access the collection
+		//  const collection = db.collection(collectionName);
+
+		 // Delete the document
+		 Image.findOne({ userid: req.session.user._id.toObjectId() }, (err, obj) => {
+			console.log(err);
+			// console.log(obj)
+			// if (!obj) {
+			// 	var obj = new Image();
+			// 	obj.userid = req.session.user._id.toObjectId();
+
+			// }
+			var ind=-1;
+			for(var i=0;i<obj.images.length;i++)
+			{
+				// console.log(obj.images[i]._id)
+				if(obj.images[i]._id.toString()==id)
+				{
+					ind=i;
+					// console.log(i);
+				}
+			}
+			if(ind!=-1)
+			{
+				obj.images.splice(ind,1);
+				obj.save();
+				return res.status(200).send({message:"Deleted Successfully"});
+			}
+			else
+			{
+				return res.status(404).send({message:"Not Found"});
+			}
+			console.log("HelloImg")
+			
+		})
+	})
 
 	return router;
 }
