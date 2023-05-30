@@ -114,6 +114,7 @@ module.exports = function (passport) {
 		// console.log(req.body);
 		var url = req.body.url;
 		var result = req.body.result;
+		var quality = req.body.quality;
 		// var result = {
 		// 	c1:"r1",
 		// 	c2:"r2"
@@ -129,7 +130,7 @@ module.exports = function (passport) {
 				obj.userid = req.session.user._id.toObjectId();
 
 			}
-			obj.images.push({ url, result })
+			obj.images.push({ url, result, quality })
 			obj.save((err) => {
 				if (err)
 					console.log(err);

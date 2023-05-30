@@ -10,11 +10,12 @@ const path = require('path');
 
 
 
-const whitelist = ['http://localhost:3000', 'http://developer2.com','https://ets-9hwzzfgyb-sarodemayur55.vercel.app','https://ets-1yxl0oqw0-sarodemayur55.vercel.app','https://ets-sarodemayur55.vercel.app']
+const whitelist = ['http://localhost:3000','http://localhost:7975', 'http://developer2.com','https://ets-9hwzzfgyb-sarodemayur55.vercel.app','https://ets-1yxl0oqw0-sarodemayur55.vercel.app','https://ets-sarodemayur55.vercel.app']
 app.use(function (req, res, next) {
   const corsWhitelist = [
     'https://ets-9hwzzfgyb-sarodemayur55.vercel.app',
     'http://localhost:3000',
+    'http://localhost:7975',
     'https://ets-1yxl0oqw0-sarodemayur55.vercel.app',
     'https://ets-sarodemayur55.vercel.app'
 ];

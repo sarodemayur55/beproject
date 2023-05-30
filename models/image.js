@@ -12,6 +12,9 @@ module.exports = mongoose.model('Image',{
             result:{
                 type: mongoose.Schema.Types.Mixed
             },
+            quality:{
+                type: Number
+            },
             time : { type : Date, default: Date.now }
         },
       ]
